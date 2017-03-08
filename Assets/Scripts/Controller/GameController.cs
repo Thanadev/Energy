@@ -24,10 +24,7 @@ public class GameController : MonoBehaviour {
 		if (instance == null) {
 			instance = this;
 			DontDestroyOnLoad(gameObject);
-
-			if (settings.muteGameMusic == true) {
-				GetComponent<AudioSource>().enabled = false;
-			}
+			GetComponent<AudioSource>().enabled = !settings.muteGameMusic;
 		} else {
 			this.enabled = false;
 		}

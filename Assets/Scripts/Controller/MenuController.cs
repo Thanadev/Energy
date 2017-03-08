@@ -20,17 +20,12 @@ public class MenuController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		musicSource = GetComponent<AudioSource>();
+		UpdateMusicComponents();
 	}
 
 	public void MuteMusic () {
 		settings.muteGameMusic = !settings.muteGameMusic;
-		musicSource.enabled = !settings.muteGameMusic;
-			
-		if (settings.muteGameMusic) {
-			musicButton.image.sprite = musicOff;
-		} else {
-			musicButton.image.sprite = musicOn;
-		}
+		UpdateMusicComponents();
 	}
 
 	public void ToggleCreditsPanel () {
@@ -47,5 +42,15 @@ public class MenuController : MonoBehaviour {
 
 	public void Quit () {
 		Application.Quit();
+	}
+
+	private void UpdateMusicComponents () {
+		musicSource.enabled = !settings.muteGameMusic;
+
+		if (settings.muteGameMusic) {
+			musicButton.image.sprite = musicOff;
+		} else {
+			musicButton.image.sprite = musicOn;
+		}
 	}
 }
