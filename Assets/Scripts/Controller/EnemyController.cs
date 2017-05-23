@@ -18,11 +18,14 @@ public class EnemyController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		rb.velocity = (playerPos.position - transform.position).normalized * Time.deltaTime * speedFactor;
+		if (playerPos != null) {
+			rb.velocity = (playerPos.position - transform.position).normalized * Time.deltaTime * speedFactor;
+		}
 	}
 
 	void OnTriggerEnter2D (Collider2D other) {
 		if (other.tag == "Player") {
+			Destroy(other.gameObject);
 			GameController.GetInstance().OnPlayerLose();
 		}
 	}

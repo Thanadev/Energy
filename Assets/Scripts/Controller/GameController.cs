@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 public class GameController : MonoBehaviour {
 	public GameSettings settings;
@@ -15,6 +17,9 @@ public class GameController : MonoBehaviour {
 	private int level = 1;
 	private float duration = 0;
 
+	private UnityAction<Scene, Scene> initLoseDelegate;
+	private UnityAction<Scene, Scene> initWinDelegate;
+
 	public static GameController GetInstance () {
 		return instance;
 	}
@@ -25,6 +30,9 @@ public class GameController : MonoBehaviour {
 			instance = this;
 			DontDestroyOnLoad(gameObject);
 			GetComponent<AudioSource>().enabled = !settings.muteGameMusic;
+
+			initLoseDelegate = InitLoseScene;
+			initWinDelegate = InitWinScene;
 		} else {
 			this.enabled = false;
 		}
@@ -41,15 +49,13 @@ public class GameController : MonoBehaviour {
 		if (level < maxLevel) {
 			SceneManager.LoadScene(level);
 		} else {
-			SceneManager.activeSceneChanged += delegate {
-				InitWinScene();
-			};
+			SceneManager.activeSceneChanged += initWinDelegate;
 				
-			SceneManager.LoadScene("win");
+			SceneManager.LoadSceneAsync("win");
 		}
 	}
 
-	public void InitWinScene () {
+	public void InitWinScene (Scene scene1, Scene scene2) {
 		GameObject.FindGameObjectWithTag("Finish").GetComponent<Text>().text = duration + " seconds";
 		Text highscoretext = GameObject.FindGameObjectWithTag("Highscores").GetComponent<Text>();
 		highscoretext.text = "";
@@ -64,11 +70,22 @@ public class GameController : MonoBehaviour {
 		for (int i = 0; i < 5; i++) {
 			highscoretext.text += highscores.highscores[i] + " seconds\n";
 		}
+
+		SceneManager.activeSceneChanged -= initWinDelegate;
+
+		Destroy(gameObject);
+		Destroy(GameObject.Find("GUI"));
 	}
 
 	public void OnPlayerLose () {
-		level = 1;
+		level = 0;
+
+		Destroy(gameObject);
+		Destroy(GameObject.Find("GUI"));
 		SceneManager.LoadScene("gameOver");
+	}
+
+	public void InitLoseScene (Scene scene1, Scene scene2) {
 		Destroy(gameObject);
 		Destroy(GameObject.Find("GUI"));
 	}

@@ -25,6 +25,7 @@ public class ExitController : MonoBehaviour {
 
 	void OnTriggerEnter2D (Collider2D other) {
 		if (usable && other.tag == "Player") {
+			Destroy(other.gameObject);
 			gc.OnPlayerWin();
 		}
 	}

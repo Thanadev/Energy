@@ -20,7 +20,10 @@ public class MenuController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		musicSource = GetComponent<AudioSource>();
-		UpdateMusicComponents();
+
+		if (musicButton != null) {
+			UpdateMusicComponents();
+		}
 	}
 
 	public void MuteMusic () {
