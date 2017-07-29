@@ -5,94 +5,91 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
+using Thanagames.Energy.Persistents;
 
-public class GameController : MonoBehaviour {
-	public GameSettings settings;
+namespace Thanagames.Energy.Controllers {
 
-	private static GameController instance;
+	public class GameController : MonoBehaviour {
+		public GameSettings settings;
 
-	public int maxLevel;
-	public HighscoreList highscores;
+		private static GameController instance;
 
-	private int level = 1;
-	private float duration = 0;
+		public int maxLevel;
+		public HighscoreList highscores;
 
-	private UnityAction<Scene, Scene> initLoseDelegate;
-	private UnityAction<Scene, Scene> initWinDelegate;
+		private int level = 1;
+		private float duration = 0;
 
-	public static GameController GetInstance () {
-		return instance;
-	}
+		private UnityAction<Scene, Scene> initWinDelegate;
 
-	// Use this for initialization
-	void Awake () {
-		if (instance == null) {
-			instance = this;
-			DontDestroyOnLoad(gameObject);
-			GetComponent<AudioSource>().enabled = !settings.muteGameMusic;
-
-			initLoseDelegate = InitLoseScene;
-			initWinDelegate = InitWinScene;
-		} else {
-			this.enabled = false;
+		public static GameController GetInstance () {
+			return instance;
 		}
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		duration += Time.deltaTime;
-	}
 
-	public void OnPlayerWin () {
-		level++;
+		// Use this for initialization
+		void Awake () {
+			if (instance == null) {
+				instance = this;
+				DontDestroyOnLoad(gameObject);
+				GetComponent<AudioSource>().enabled = !settings.muteGameMusic;
 
-		if (level < maxLevel) {
-			SceneManager.LoadScene(level);
-		} else {
-			SceneManager.activeSceneChanged += initWinDelegate;
-				
-			SceneManager.LoadSceneAsync("win");
+				initWinDelegate = InitWinScene;
+			} else {
+				this.enabled = false;
+			}
 		}
-	}
+		
+		// Update is called once per frame
+		void Update () {
+			duration += Time.deltaTime;
+		}
 
-	public void InitWinScene (Scene scene1, Scene scene2) {
-		GameObject.FindGameObjectWithTag("Finish").GetComponent<Text>().text = duration + " seconds";
-		Text highscoretext = GameObject.FindGameObjectWithTag("Highscores").GetComponent<Text>();
-		highscoretext.text = "";
+		public void OnPlayerWin () {
+			level++;
 
-		for (int i = 0; i < 5; i++) {
-			if (highscores.highscores[i] > duration || highscores.highscores[i] == 0) {
-				highscores.highscores[i] = duration;
-				break;
+			if (level < maxLevel) {
+				SceneManager.LoadScene(level);
+			} else {
+				SceneManager.activeSceneChanged += initWinDelegate;
+				SceneManager.LoadScene("win");
 			}
 		}
 
-		for (int i = 0; i < 5; i++) {
-			highscoretext.text += highscores.highscores[i] + " seconds\n";
+		public void InitWinScene (Scene scene1, Scene scene2) {
+			Destroy(gameObject);
+			Destroy(GameObject.Find("GUI"));
+			GameObject.FindGameObjectWithTag("Finish").GetComponent<Text>().text = duration + " secondes";
+			Text highscoretext = GameObject.FindGameObjectWithTag("Highscores").GetComponent<Text>();
+			highscoretext.text = "";
+
+			for (int i = 0; i < 5; i++) {
+				if (highscores.highscores[i] > duration || highscores.highscores[i] == 0) {
+					highscores.highscores[i] = duration;
+					break;
+				}
+			}
+
+			for (int i = 0; i < 5; i++) {
+				highscoretext.text += highscores.highscores[i] + " secondes\n";
+			}
+
+			SceneManager.activeSceneChanged -= initWinDelegate;
+
+
 		}
 
-		SceneManager.activeSceneChanged -= initWinDelegate;
+		public void OnPlayerLose () {
+			level = 0;
 
-		Destroy(gameObject);
-		Destroy(GameObject.Find("GUI"));
-	}
+			Destroy(gameObject);
+			Destroy(GameObject.Find("GUI"));
+			SceneManager.LoadScene("gameOver");
+		}
 
-	public void OnPlayerLose () {
-		level = 0;
-
-		Destroy(gameObject);
-		Destroy(GameObject.Find("GUI"));
-		SceneManager.LoadScene("gameOver");
-	}
-
-	public void InitLoseScene (Scene scene1, Scene scene2) {
-		Destroy(gameObject);
-		Destroy(GameObject.Find("GUI"));
-	}
-
-	public float Duration {
-		get {
-			return this.duration;
+		public float Duration {
+			get {
+				return this.duration;
+			}
 		}
 	}
 }

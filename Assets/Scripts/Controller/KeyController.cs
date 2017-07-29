@@ -2,24 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KeyController : MonoBehaviour {
-
-	public ExitController exit;
-
-	// Use this for initialization
-	void Start () {
-		
-	}
+namespace Thanagames.Energy.Controllers {
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+	public class KeyController : MonoBehaviour {
 
-	public void OnTriggerEnter2D (Collider2D other) {
-		if (other.tag == "Player") {
-			exit.OnKeyActivated();
-			Destroy(gameObject);
+		public ExitController exit;
+
+		// Use this for initialization
+		void Start () {
+			
+		}
+		
+		// Update is called once per frame
+		void Update () {
+			
+		}
+
+		public void OnTriggerEnter2D (Collider2D other) {
+			if (other.tag == "Player") {
+				exit.OnKeyActivated();
+				Destroy(gameObject);
+			}
 		}
 	}
 }
