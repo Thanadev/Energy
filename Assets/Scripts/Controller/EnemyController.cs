@@ -8,22 +8,31 @@ namespace Thanagames.Energy.Controllers {
 	public class EnemyController : MonoBehaviour {
 
 		public float speedFactor = 100;
+        public float secBeforeActivation = 2f;
 
 		protected Transform playerPos;
 		protected Rigidbody2D rb;
+        protected bool isActivated = false;
 
-		// Use this for initialization
 		void Start () {
 			playerPos = GameObject.FindGameObjectWithTag("Player").transform;
 			rb = GetComponent<Rigidbody2D>();
+
+            StartCoroutine(StartActivationSequence());
 		}
 		
-		// Update is called once per frame
 		void Update () {
-			if (playerPos != null) {
+			if (isActivated && playerPos != null) {
 				rb.velocity = (playerPos.position - transform.position).normalized * Time.deltaTime * speedFactor;
 			}
 		}
+
+        IEnumerator StartActivationSequence()
+        {
+            yield return new WaitForSeconds(secBeforeActivation);
+
+            isActivated = true;
+        }
 
 		void OnTriggerEnter2D (Collider2D other) {
 			if (other.tag == "Player") {
