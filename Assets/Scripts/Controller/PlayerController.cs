@@ -6,8 +6,6 @@ namespace Thanagames.Energy.Controllers {
 	
 	[RequireComponent(typeof(Rigidbody2D))]
 	public class PlayerController : MonoBehaviour {
-        public Transform baseJoystick;
-        public Transform handleJoystick;
 		public float speedFactor = 100;
 
 		protected Vector2 direction;
@@ -18,10 +16,6 @@ namespace Thanagames.Energy.Controllers {
         void Start () {
 			rb = GetComponent<Rigidbody2D>();
 			direction = Vector2.zero;
-
-            baseJoystick = GameObject.FindGameObjectWithTag("Joy_Base").transform;
-            handleJoystick = GameObject.FindGameObjectWithTag("Joy_Handle").transform;
-            handleJoystick.localPosition = Vector3.zero;
         }
 		
 		void Update () {

@@ -7,7 +7,7 @@ namespace Thanagames.Energy.Controllers {
 	public class ExitController : MonoBehaviour {
 
 		public int neededKeys = 0;
-		public ParticleSystem particles;
+		public ParticleSystem[] particles;
 
 		GameController gc;
 		bool usable = false;
@@ -33,7 +33,11 @@ namespace Thanagames.Energy.Controllers {
 		}
 
 		void OnActivate () {
-			particles.Play();
+            foreach (var partSys in particles)
+            {
+                partSys.Play();
+            }
+			
 			usable = true;
 		}
 	}

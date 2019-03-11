@@ -35,7 +35,7 @@ namespace Thanagames.Energy.Controllers {
         }
 
 		void OnTriggerEnter2D (Collider2D other) {
-			if (other.tag == "Player") {
+			if (other.CompareTag("Player")) {
 				Destroy(other.gameObject);
 				GameController.GetInstance().OnPlayerLose();
 			}
